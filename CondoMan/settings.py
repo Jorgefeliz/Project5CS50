@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-6)cgt&z0glc)k=$_tvlbjifrie^8!qt&37$eb%g6wh^2jhx_%_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#Added to make the server visible in lan
 ALLOWED_HOSTS = ['10.0.0.3', '127.0.0.1']
 
 
