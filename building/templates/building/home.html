@@ -1,7 +1,8 @@
 {% extends "building/layout.html" %}
 
 {% block body %}
-   
+
+
     <div id="home">
         <h4> Water Pump Schedule</h4>
         <ul>
@@ -11,10 +12,25 @@
         </ul>
 
         <h4> Events schedule</h4>
-        <ul>
-            <li>Birthday 01 January 2022 </li>
 
-        </ul>
+            <table class="table">
+                <tr>
+                    <th>Event date</th>
+                    <th>Place</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                </tr>
+                {% for event in events%}
+                    <tr>
+                        <td>{{ event.event_date }}</td>
+                        <td>{{ event.place }}</td>
+                        <td>{{ event.type_of_event }}</td>
+                        <td>{{ event.status }}</td>
+                    </tr>
+
+            {% endfor%}
+
+            </table>
 
         <h4> Reported issues</h4>
         <ul>
@@ -33,6 +49,8 @@
 
     <div id="event">
         <h3> Event </h3>
+
+
     </div>
 
     <div id="issue">
@@ -40,7 +58,7 @@
     </div>
 
     <div id="payment">
-        <h3> Payment </h3>
+        <h3> Announcements </h3>
     </div>
 
 

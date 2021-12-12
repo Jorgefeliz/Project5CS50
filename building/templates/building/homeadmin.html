@@ -1,0 +1,99 @@
+{% extends "building/layout.html" %}
+
+{% block body %}
+
+<h1> ADMIN VIEW</h1>
+    <div id="home">
+        <h4> Water Pump Schedule</h4>
+        <ul>
+            <li>Mon - Fri 08:00 AM to 10:00 AM  </li>
+            <li>Mon - Fri 10:00 PM to 10:00 PM   </li>
+            <li>Sat - Sun 12:00 PM to 14:00 PM  </li>
+        </ul>
+
+        <h4> Events schedule</h4>
+
+            <table class="table">
+                <tr>
+                    <th>Event date</th>
+                    <th>Place</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                </tr>
+                {% for event in events%}
+                    <tr id="row{{ event.id }}">
+                        <td>{{ event.event_date }}</td>
+                        <td>{{ event.place }}</td>
+                        <td>{{ event.type_of_event }}</td>
+                        <td>
+
+                            <select id="event{{ event.id }}" name="event{{ event.id }}">
+                                <option value= {{ event.status }} >{{ event.status }}</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="denied">Denied</option>
+                     
+                            </select>
+                            <input type="button" class="btn btn-primary"  value="Submit" onclick="event_update( {{ event.id }})" />
+
+                        
+                        </td>
+                    </tr>
+
+            {% endfor%}
+
+            </table>
+
+        <h4> Reported issues</h4>
+        <ul>
+            <li>None</li>
+
+        </ul>
+
+        <h4> Announcements</h4>
+        <ul>
+            <li>None</li>
+
+
+
+        </ul>
+
+
+    </div>
+
+    <div id="event">
+        <h3> Event </h3>
+
+
+    </div>
+
+    <div id="issue">
+        <h3> Issue </h3>
+    </div>
+
+    <div id="payment">
+        <h3> Announcements</h3>
+
+       
+        <div class="container">
+            <form id="announcement_form"  onsubmit="return announcement_post()">
+                <label for="title"><b>Title:</b></label>
+                <input type="text" placeholder="Title" name="title" id="title" required>
+
+                <label for="content"><b>Content:</b></label><br>
+                <textarea placeholder="Type announcement" name="content" id="content" ></textarea>
+
+                <label for="date">Valid until: </label>
+                <input type="date" id="valid_date" name="valid_date">
+                <br>
+
+                <input type="submit" class="btn btn-primary" value="Submit">
+                
+            </form>
+        </div>
+
+    </div>
+
+
+    <hr>
+   
+{% endblock %}

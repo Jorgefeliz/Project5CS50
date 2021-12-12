@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, request
 from django.urls import reverse
-from .models import Events, Profile, User
+from .models import Announcement, Events, Profile, User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -17,7 +17,18 @@ from django.http import JsonResponse
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, "building/home.html" )
+
+        user = User.objects.get(pk=request.user.id)
+        profile = Profile.objects.get(user=user)
+
+
+        if profile.role == "admin":
+            eventos = Events.objects.filter(status = "Pending").order_by("event_date")
+
+            return render(request, "building/homeadmin.html", {"events": eventos })
+
+        eventos = Events.objects.filter(profile = profile).order_by("event_date")
+        return render(request, "building/home.html", {"events": eventos })
     else:
         return HttpResponseRedirect(reverse("login"))
 
@@ -53,6 +64,11 @@ def register(request):
         username = request.POST["username"]
         email = request.POST["email"]
 
+        residencial = request.POST["residencial"]
+        building = request.POST["building"]
+        apto = request.POST["apto"]
+
+
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
@@ -65,6 +81,14 @@ def register(request):
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
+            profile = Profile.objects.create(
+                user = user,
+                residencial = residencial,
+                building = building,
+                apto = apto    )
+            
+            profile.save()
+
         except IntegrityError:
             return render(request, "building/register.html", {
                 "message": "Username already taken."
@@ -82,13 +106,21 @@ def event(request):
 
         type_of_event = event['event_type']
         place = event['place']
-        date = event['date']
+        date = event['date'] + "T08:00"
 
-        print("aqui estoy")
-        print(date)
+ 
 
         user = User.objects.get(pk=request.user.id)
         profile = Profile.objects.get(user=user)
+
+        #making sure there is not events same day and same location
+        
+      
+        
+        comprobar = Events.objects.filter(place=place).filter(event_date=date)
+
+        if len(comprobar) != 0:
+            return JsonResponse({"message": "There is an event in that date and place"}, safe=False)
 
         event = Events.objects.create(
             profile = profile,
@@ -104,4 +136,49 @@ def event(request):
             print("Error while saving in events")
             return JsonResponse({"message": "Error while saving in events"}, safe=False)
 
-        return JsonResponse({"message": "200"}, safe=False)
+        return JsonResponse({"message": "The event have been created"}, safe=False)
+
+
+@login_required
+def event_update(request, event_id, status):
+    if request.method == 'GET':
+     
+        try:
+            evento = Events.objects.get(pk=event_id)
+            evento.status = status
+            evento.save()
+            
+        except:
+            print("Error while updating in events")
+            return JsonResponse({"message": "Error while updating in events"}, safe=False)
+
+        return JsonResponse({"message": "The event have been updated"}, safe=False)
+
+@csrf_exempt
+@login_required
+def announcement (request):
+    if request.method == "POST":
+        announce = json.loads(request.body)
+
+        title = announce['title']
+        content = announce['content']
+        valid_date = announce['valid_date']
+
+
+        try:
+            user = User.objects.get(pk=request.user.id)
+            profile = Profile.objects.get(user=user)
+
+            announcement = Announcement.objects.create(
+                profile = profile,
+                title = title,
+                content = content,
+                valid_date = valid_date
+                 )
+            announcement.save()
+            
+        except:
+            print("Error while creating announcement")
+            return JsonResponse({"message": "Error while creating announcement"}, safe=False)
+
+        return JsonResponse({"message": "The announcement have been updated", "announce_id": announcement.id }, safe=False)

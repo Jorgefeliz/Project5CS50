@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 # Create your models here.
 class User(AbstractUser):
     pass
@@ -17,6 +18,7 @@ class Profile (models.Model):
     residencial = models.CharField(max_length=128)
     building = models.CharField(max_length=64)
     apto = models.CharField(max_length=64)
+    role = models.CharField(max_length=64, default="resident")
 
 class Events(models.Model):
     profile = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="events")
@@ -34,4 +36,14 @@ class Events(models.Model):
             "type_of_event": self.type_of_event,
             "status": self.status
         }
+
+
+class Announcement(models.Model):
+    profile = models.ForeignKey("Profile", on_delete=models.CASCADE)
+    title = models.CharField(max_length=128)
+    content = models.CharField(max_length=255)
+    valid_date = models.DateTimeField()
+    submited = models.DateTimeField(auto_now_add=True)
+
+
 
