@@ -75,7 +75,7 @@ function announcement (){
     document.querySelector('#event').style.display = 'none';
     document.querySelector('#issue').style.display = 'none';
     document.querySelector('#payment').style.display = 'block';
-
+    
 
 }
 
@@ -117,10 +117,6 @@ function event_update(event_id ) {
     let evento =  "event" + event_id
     const event_status = document.getElementById(evento);
     evento = event_status.options[event_status.selectedIndex].text;
-  
-
-    console.log(event_id);
-    console.log(evento);
 
     let route = '/event/' + event_id + '/' + evento 
     fetch(route)
@@ -138,6 +134,7 @@ function event_update(event_id ) {
  
 }
 
+// Admin function
 function announcement_post(){
  
     const title = document.querySelector('#title').value;
@@ -161,9 +158,41 @@ function announcement_post(){
           alert(result["message"])
       });
     localStorage.clear();
-    return false;
-   
 
+    document.querySelector('#title').value = "";
+    document.querySelector('#content').value = "";
+    document.querySelector('#valid_date').value = "";
+
+
+
+
+    return false;
+    
+}
+
+function announce_delete(announce_id){
+ 
+    let route = '/announcement_update' 
+    fetch(route, {
+        method: 'PUT',
+        body: JSON.stringify({
+            announce_id: announce_id
+            
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+          // Print result
+     
+          console.log(result);
+          alert(result["message"])
+      });
+    localStorage.clear();
+
+    route = 'announce' + announce_id
+    document.getElementById(route).style.display = 'none';
+
+    return false;
     
 }
 

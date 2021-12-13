@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
@@ -9,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.http import JsonResponse
+from datetime import date
 
 #from CondoMan import building
 
@@ -20,15 +22,27 @@ def index(request):
 
         user = User.objects.get(pk=request.user.id)
         profile = Profile.objects.get(user=user)
+        today = date.today()
 
 
         if profile.role == "admin":
             eventos = Events.objects.filter(status = "Pending").order_by("event_date")
 
-            return render(request, "building/homeadmin.html", {"events": eventos })
+            #This is because I desided that admin must see announces 30 days before today, 
+            # it's like a history of the most recent past announces
 
-        eventos = Events.objects.filter(profile = profile).order_by("event_date")
-        return render(request, "building/home.html", {"events": eventos })
+            days = datetime.timedelta(30)
+            today = today - days
+            announces = Announcement.objects.filter(valid_date__gte = today  )
+
+            return render(request, "building/homeadmin.html", {"events": eventos, "announces": announces })
+
+         ############################################################################333   
+
+        eventos = Events.objects.filter(profile = profile).filter(event_date__gte = today).order_by("event_date")
+        
+        announces = Announcement.objects.filter(valid_date__gte = today  )
+        return render(request, "building/home.html", {"events": eventos, "announces": announces })
     else:
         return HttpResponseRedirect(reverse("login"))
 
@@ -182,3 +196,46 @@ def announcement (request):
             return JsonResponse({"message": "Error while creating announcement"}, safe=False)
 
         return JsonResponse({"message": "The announcement have been updated", "announce_id": announcement.id }, safe=False)
+
+
+@csrf_exempt
+@login_required
+def announcement_update (request):
+        if request.method == 'POST':
+            announce = json.loads(request.body)
+
+            announce_id = announce['announce_id']
+            title = announce['title']
+            content = announce['content']
+     
+            try:
+                announcement = Announcement.objects.get(pk=announce_id)
+
+                announcement.title = title
+                announcement.content = content
+
+                announcement.save()
+                
+            except:
+                print("Error while updating announce")
+                return JsonResponse({"message": "Error while updating announce"}, safe=False)
+
+            return JsonResponse({"message": "The annouce have been updated"}, safe=False)
+
+        if request.method == 'PUT':
+            print("KLK")
+            announce = json.loads(request.body)
+
+            pk = announce['announce_id']
+            print(pk)
+            try:
+                announcement = Announcement.objects.get(pk=pk)
+                announcement.delete()
+                
+                
+            except:
+                print("Error while deleting announces")
+                return JsonResponse({"announcement": "Error while deleting announces"}, safe=False)
+
+            return JsonResponse({"message": "Announcement deleted"}, safe=False)
+

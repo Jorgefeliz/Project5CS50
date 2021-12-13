@@ -39,11 +39,26 @@ class Events(models.Model):
 
 
 class Announcement(models.Model):
-    profile = models.ForeignKey("Profile", on_delete=models.CASCADE)
-    title = models.CharField(max_length=128)
-    content = models.CharField(max_length=255)
-    valid_date = models.DateTimeField()
-    submited = models.DateTimeField(auto_now_add=True)
+    profile = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="announce")
+    title = models.CharField(max_length=255, blank=True)
+    content = models.CharField(max_length=20000, blank=True)
+    valid_date = models.DateField()
+    submited = models.DateTimeField(auto_now=True)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "valid_date": self.valid_date,
+            "submited": self.submited
+        }
+   
+
+
+
+
+
 
 
 
