@@ -21,6 +21,7 @@ input[type=text], input[type=password], textarea{
   width: 100%;
 }
 
+
 button:hover {
   opacity: 0.6;
 }
@@ -50,7 +51,22 @@ span.psw {
   padding-top: 16px;
 }
 
+#building{
+  max-width: 900px;
+  margin: auto;
+ 
+  padding-left: 5px;
+  border-radius: 30px;
+}
 
+#loginForm{
+  max-width: 700px;
+  margin: auto;
+}
+
+.division{
+  
+}
 
 /* Change styles for span and cancel button on extra small screens */
 @media screen and (max-width: 300px) {
@@ -66,5 +82,19 @@ span.psw {
 #container{
   padding-left: 5%;
   padding-right: 5%;
-  padding-top: 5%;
+  padding-top: 2%;
+}
+
+h4{
+  color: rgb(28, 0, 94);
+}
+
+.rowAccepted{
+  background-color: rgba(11, 170, 24, 0.72);
+  color: black;
+}
+
+.rowDenied{
+  background-color: rgb(249, 66, 66);
+  color: black;
 }

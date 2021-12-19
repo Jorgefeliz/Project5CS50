@@ -170,6 +170,7 @@ def event_update(request, event_id, status):
 
 @csrf_exempt
 @login_required
+#the announcement is create it
 def announcement (request):
     if request.method == "POST":
         announce = json.loads(request.body)
@@ -200,21 +201,36 @@ def announcement (request):
 
 @csrf_exempt
 @login_required
+#update (POST) or delete (PUT) announcement
 def announcement_update (request):
         if request.method == 'POST':
             announce = json.loads(request.body)
-
+            print(announce)
             announce_id = announce['announce_id']
             title = announce['title']
             content = announce['content']
-     
+            valid_date = announce['valid_date']
+            print(f"la fecha es {valid_date}")
+
+            try:
+             
+                datetime.datetime.strptime(valid_date,'%Y-%m-%d')
+        
+            except:
+                valid_date = 0
+        
+
             try:
                 announcement = Announcement.objects.get(pk=announce_id)
 
                 announcement.title = title
                 announcement.content = content
 
-                announcement.save()
+                if valid_date == 0:
+                   announcement.save()
+                else:
+                    announcement.valid_date = valid_date
+                    announcement.save()
                 
             except:
                 print("Error while updating announce")
@@ -223,11 +239,11 @@ def announcement_update (request):
             return JsonResponse({"message": "The annouce have been updated"}, safe=False)
 
         if request.method == 'PUT':
-            print("KLK")
+     
             announce = json.loads(request.body)
 
             pk = announce['announce_id']
-            print(pk)
+       
             try:
                 announcement = Announcement.objects.get(pk=pk)
                 announcement.delete()
@@ -238,4 +254,22 @@ def announcement_update (request):
                 return JsonResponse({"announcement": "Error while deleting announces"}, safe=False)
 
             return JsonResponse({"message": "Announcement deleted"}, safe=False)
+
+@csrf_exempt
+@login_required
+def announcement_retrieve (request):
+        if request.method == 'POST':
+            announce = json.loads(request.body)
+
+            announce_id = announce['announce_id']
+     
+            try:
+                announcement = Announcement.objects.get(pk=announce_id)
+
+                 
+            except:
+                print("Error while retrieving announce")
+                return JsonResponse({"message": "Error while retrieving announce"}, safe=False)
+
+            return JsonResponse(announcement.serialize(), safe=False)
 

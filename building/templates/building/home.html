@@ -2,11 +2,11 @@
 
 {% block body %}
 
-
-    <div id="home">
-         <h3> Announcements  </h3>
+<div id="building">
+    <div class="division" id="home">
+         <h4> Announcements  </h4>
         {% for announce in announces%}
-            <h4> {{ announce.title}} </h4>
+            <h5> {{ announce.title}} </h5>
             <p> {{ announce.content }}</p>
 
 
@@ -24,11 +24,11 @@
                     <th>Status</th>
                 </tr>
                 {% for event in events%}
-                    <tr>
+                    <tr >
                         <td>{{ event.event_date }}</td>
                         <td>{{ event.place }}</td>
                         <td>{{ event.type_of_event }}</td>
-                        <td>{{ event.status }}</td>
+                        <td class="row{{event.status}}">{{ event.status }}</td>
                     </tr>
 
             {% endfor%}
@@ -50,21 +50,22 @@
 
     </div>
 
-    <div id="event">
+    <div class="division" id="event">
         <h3> Event </h3>
 
 
     </div>
 
-    <div id="issue">
+    <div class="division" id="issue">
         <h3> Issue </h3>
     </div>
 
-    <div id="payment">
+    <div class="division" id="payment">
         <h3> Announcements </h3>
     </div>
 
 
     <hr>
+</div>
    
 {% endblock %}

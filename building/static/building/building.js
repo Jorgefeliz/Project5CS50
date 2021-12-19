@@ -21,6 +21,8 @@ function home (){
     document.querySelector('#event').style.display = 'none';
     document.querySelector('#issue').style.display = 'none';
     document.querySelector('#payment').style.display = 'none';
+ 
+    
 }
 
 function schedule (){
@@ -156,6 +158,7 @@ function announcement_post(){
      
           console.log(result);
           alert(result["message"])
+          window.location.href = '/'
       });
     localStorage.clear();
 
@@ -194,5 +197,122 @@ function announce_delete(announce_id){
 
     return false;
     
+}
+
+function announce_edit(announce_id){
+ 
+    let route = '/announcement_retrieve' 
+    fetch(route, {
+        method: 'POST',
+        body: JSON.stringify({
+            announce_id: announce_id
+            
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+          // Print result
+     
+          console.log(result);
+
+          route = 'announce' + announce_id
+          document.getElementById(route).innerHTML = `
+
+          <form id="announce_edit"  onsubmit="return announce_save(${announce_id})">
+          <label for="title"><b>Title:</b></label>
+          
+          <textarea id="title${announce_id}"> ${result['title']} </textarea>
+
+          <textarea id="text${announce_id}"> ${result['content']} </textarea>
+
+          <label for="previous_valid"><b>Actual valid date: ${result['valid_date']}</b></label> <br>
+          <label for="date">Date:</label>
+          <input type="date" id="date${announce_id}" name="date" placeholder="${result['valid_date']}" requiered ><br>
+          <input type="submit" class="btn btn-primary"  value="Save"  />
+          <input type="button" class="btn btn-warning"  value="Cancel" onclick="announce_cancel( ${announce_id} )" />
+          <br>
+          <br>
+          <hr>
+          </form>
+     
+          `;
+         
+      });
+    localStorage.clear();
+
+ 
+
+    return false;
+    
+}
+
+function announce_save(announce_id){
+ 
+    let id = "title"+ announce_id;
+  
+    const title = document.getElementById(id).value;
+
+    id = "text"+ announce_id
+    const content = document.getElementById(id).value;
+
+    id = "date" + announce_id
+    const valid_date = document.getElementById(id).value;
+
+    fetch('/announcement_update', {
+        method: 'POST',
+        body: JSON.stringify({
+          announce_id: announce_id,
+          title: title,
+          content: content,
+          valid_date: valid_date
+            
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+          // Print result
+     
+          console.log(result);
+     
+ 
+      });
+    
+    // I will make sure that I only show the values in database
+    announce_cancel(announce_id)
+   //document.location.reload(true)
+   //window.location.href = '/'
+
+}
+
+function announce_cancel(announce_id){
+
+    let route = '/announcement_retrieve' 
+    fetch(route, {
+        method: 'POST',
+        body: JSON.stringify({
+            announce_id: announce_id
+            
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+          // Print result
+     
+          console.log(result);
+
+    
+    id = 'announce' + announce_id
+    document.getElementById(id).innerHTML = `
+    <h4> ${result['title']} </h4>
+    <p> ${result['content']} </p>
+    <em> ${result['valid_date']}</em><br>
+    <input type="button" class="btn btn-primary"  value="Edit" onclick="announce_edit( ${announce_id})" />
+    <input type="button" class="btn btn-warning"  value="Delete" onclick="announce_delete( ${announce_id})" />
+    <br>
+    <br>
+    <hr>
+    `;
+     });
+    localStorage.clear();
 }
 

@@ -3,15 +3,17 @@
 {% block body %}
 
 <h1> ADMIN VIEW</h1>
+
+    <div id="building">
     <div id="home">
         <div style="border: 2%;">
-            <h3> Announcements  </h3>
+            <h4> Announcements  </h4>
             {% for announce in announces%}
             <div id="announce{{announce.id}}">
                 <h4> {{ announce.title}} </h4>
                 <p> {{ announce.content }}</p>
                 <em> {{ announce.valid_date }}</em><br>
-                <input type="button" class="btn btn-primary"  value="Edit" onclick="event_update( {{ announce.id }})" />
+                <input type="button" class="btn btn-primary"  value="Edit" onclick="announce_edit( {{ announce.id }})" />
                 <input type="button" class="btn btn-warning"  value="Delete" onclick="announce_delete( {{ announce.id}})" />
                 <br>
                 <br>
@@ -105,8 +107,8 @@
         </div>
 
     </div>
-
-
     <hr>
+
+    </div>
    
 {% endblock %}
