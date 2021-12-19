@@ -39,8 +39,8 @@ class Events(models.Model):
 
 
 class Announcement(models.Model):
-    profile = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="announce")
-    title = models.CharField(max_length=255, blank=True)
+    profile = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="announcer")
+    title = models.CharField(max_length=255)
     content = models.CharField(max_length=20000, blank=True)
     valid_date = models.DateField()
     submited = models.DateTimeField(auto_now=True)
@@ -53,7 +53,28 @@ class Announcement(models.Model):
             "valid_date": self.valid_date,
             "submited": self.submited
         }
-   
+
+class Issues(models.Model):
+    title = models.CharField(max_length=255)
+    categoria = models.CharField(max_length=128)
+    description = models.CharField(max_length=20000)
+    status = models.CharField(max_length=96)
+    reported_by = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="reporter")
+    reported_date = models.DateTimeField(auto_now=True)
+    signed_by = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="signer", null=True, blank=True)
+    signed_date = models.DateTimeField(null=True, blank=True)
+
+    def serialize(self):
+       return {
+           "id":self.id,
+           "title": self.title,
+           "categoria": self.categoria,
+           "description": self.description,
+           "status": self.status,
+           "reported_date": self.reported_date,
+           "signed_date": self.signed_date
+
+       }
 
 
 

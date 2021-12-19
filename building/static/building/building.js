@@ -69,6 +69,33 @@ function issue (){
     document.querySelector('#event').style.display = 'none';
     document.querySelector('#issue').style.display = 'block';
     document.querySelector('#payment').style.display = 'none';
+
+    document.querySelector("#issue").innerHTML = `
+   
+    <h3> Issue Report </h3>
+  
+    <form id="issue_form"  onsubmit="return issue_report()">
+
+         <label for="title">Title:</label>
+         <input type="text" placeholder="title" name="title" id="issue_title" required>
+
+        <label for="issue">Issue Type:</label>
+            <select id="issue_type" name="issue_type">
+                <option value="water">Water</option>
+                <option value="electricity">Electricity</option>
+                <option value="sound">Loud sound</option>
+                <option value="construction">construction</option>
+                <option value="other">Other</option>
+            </select>
+            <br>
+        <label for="description">Description:</label>
+        <textarea id="description_issue"></textarea>
+
+        <br>
+
+        <input type="submit" value="Submit">
+    </form>   
+    `;
 }
 
 function announcement (){
@@ -86,9 +113,6 @@ function schedule_event() {
     const event_type = document.querySelector('#event_type').value;
     const place = document.querySelector('#place').value;
     const date = document.querySelector('#date').value;
-
-    console.log(place);
-    console.log(date);
 
     
     fetch('/event', {
@@ -314,5 +338,56 @@ function announce_cancel(announce_id){
     `;
      });
     localStorage.clear();
+}
+
+function issue_report(){
+    const title = document.querySelector('#issue_title').value;
+    const categoria = document.querySelector('#issue_type').value;
+    const description = document.querySelector('#description_issue').value;
+    const status = "pending";
+
+    
+    fetch('/issue/0', {
+      method: 'POST',
+      body: JSON.stringify({
+        title :title,
+        categoria: categoria,
+        description: description,
+        status: status
+          
+      })
+    })
+    .then(response => response.json())
+    .then(result => {
+        // Print result
+        alert(result["message"])
+    });
+  window.location.href = '/'
+  localStorage.clear();
+  return false;
+}
+
+function issue_update(issue_id){
+
+    let issue =  "issue" + issue_id
+    const issue_status = document.getElementById(issue)
+    issue = issue_status.options[issue_status.selectedIndex].text;
+
+    fetch('/issue/0', {
+        method: 'PUT',
+        body: JSON.stringify({
+          id: issue_id,
+          status: issue
+            
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+          // Print result
+          alert(result["message"])
+      });
+    window.location.href = '/'
+    localStorage.clear();
+    return false;
 }
 

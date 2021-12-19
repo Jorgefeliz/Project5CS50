@@ -5,12 +5,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, request
 from django.urls import reverse
-from .models import Announcement, Events, Profile, User
+from .models import Announcement, Events, Issues, Profile, User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.http import JsonResponse
 from datetime import date
+from django.db.models import Q
 
 #from CondoMan import building
 
@@ -35,14 +36,19 @@ def index(request):
             today = today - days
             announces = Announcement.objects.filter(valid_date__gte = today  )
 
-            return render(request, "building/homeadmin.html", {"events": eventos, "announces": announces })
+            issues = Issues.objects.filter(~Q(status = "solved"))
+
+            return render(request, "building/homeadmin.html", {"events": eventos, "announces": announces, "issues": issues })
 
          ############################################################################333   
 
         eventos = Events.objects.filter(profile = profile).filter(event_date__gte = today).order_by("event_date")
         
         announces = Announcement.objects.filter(valid_date__gte = today  )
-        return render(request, "building/home.html", {"events": eventos, "announces": announces })
+
+        issues = Issues.objects.filter(reported_by = profile)
+
+        return render(request, "building/home.html", {"events": eventos, "announces": announces, "issues":issues })
     else:
         return HttpResponseRedirect(reverse("login"))
 
@@ -77,6 +83,7 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
+
 
         residencial = request.POST["residencial"]
         building = request.POST["building"]
@@ -205,12 +212,11 @@ def announcement (request):
 def announcement_update (request):
         if request.method == 'POST':
             announce = json.loads(request.body)
-            print(announce)
             announce_id = announce['announce_id']
             title = announce['title']
             content = announce['content']
             valid_date = announce['valid_date']
-            print(f"la fecha es {valid_date}")
+        
 
             try:
              
@@ -273,3 +279,87 @@ def announcement_retrieve (request):
 
             return JsonResponse(announcement.serialize(), safe=False)
 
+@csrf_exempt
+@login_required
+##POST create
+##PUT update
+##GET retrieve
+def issue(request, issue_id):
+    if request.method == "POST":
+        user = User.objects.get(pk=request.user.id)
+        profile = Profile.objects.get(user=user)
+
+        issue = json.loads(request.body)
+        
+        
+        title = issue["title"]
+        categoria = issue["categoria"]
+        description = issue["description"]
+        status = issue["status"]
+        reported_by = profile
+        print(issue)
+
+
+        try:
+            issues = Issues.objects.create(
+                title = title,
+                categoria = categoria,
+                description = description,
+                reported_by = reported_by,
+                status = status
+            )
+            issues.save()
+
+        except:
+            return JsonResponse({"message": "Error while creating report"}, safe=False)
+        
+        return JsonResponse({"message": "Report created"}, safe=False)
+
+
+    if request.method == "PUT":
+
+        user = User.objects.get(pk=request.user.id)
+        profile = Profile.objects.get(user=user)
+
+        issue = json.loads(request.body)
+
+        issue_id = issue["id"]
+        status = issue["status"]
+        signed_by = profile
+        signed_date = date.today()
+        print("estamos AKI")
+
+        try:
+            description = issue["description"]
+        except:
+            description = None
+
+        try:
+            issues = Issues.objects.get(pk=issue_id)
+
+            if description == None:
+                pass
+            else:
+                issues.description = description
+
+            issues.signed_by = signed_by
+            issues.status = status
+            signed_date = signed_date
+            
+            issues.save()            
+
+        except:
+            return JsonResponse({"message": "Error while updating report"}, safe=False)
+
+
+        return JsonResponse({"message": "Report updated"}, safe=False)
+
+    if request.method == "GET":
+
+        try:
+            issues = Issues.objects.get(pk = issue_id)
+        except:
+            return JsonResponse({"message": "Error while retrieving report"}, safe=False)
+        
+        return JsonResponse(issues.serialize(), safe=False)
+        

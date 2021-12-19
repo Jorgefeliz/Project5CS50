@@ -1,15 +1,19 @@
 {% extends "building/layout.html" %}
 
 {% block body %}
+
+<div id="loginForm">
 <h2><center>CondoMan</center></h2>
     <h2>Register</h2>
 
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
+    <div id="container">
 
     <form action="{% url 'register' %}" method="post">
         {% csrf_token %}
+
         <div class="form-group">
             <input class="form-control" autofocus type="text" name="username" placeholder="Username">
         </div>
@@ -65,9 +69,11 @@
 
         <br>
 
-        <input class="btn btn-primary" type="submit" value="Register">
+        <input id="login_button" class="btn btn-primary" type="submit" value="Register">
     </form>
 
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+    </div>
 
+    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+</div>
 {% endblock %}

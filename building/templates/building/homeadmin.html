@@ -59,18 +59,33 @@
             </table>
 
         <h4> Reported issues</h4>
-        <ul>
-            <li>None</li>
+            <table class="table">
+                <tr>
+                    <th>Title</th>
+                    <th>Categoria</th>
+                    <th>Status</th>
+                </tr>
+                {% for issue in issues %}
+                    <tr >
+                        <td>{{ issue.title }}</td>
+                        <td>{{ issue.categoria}}</td>
+                        <td >
+                            <select id="issue{{ issue.id }}" name="issue{{ issue.id }}">
+                                <option value= {{ issue.status }} >{{ issue.status }}</option>
+                                <option value="solved">Solved</option>
+                                <option value="work in progress">Work in progress</option>
+                                <option value="pending">Pending</option>
+                     
+                            </select>
 
-        </ul>
+                            <input type="button" class="btn btn-primary"  value="Update" onclick="issue_update( {{ issue.id}} )" />
 
-        <h4> Announcements</h4>
-        <ul>
-            <li>None</li>
+                        </td>
+                    </tr>
 
+            {% endfor%}
 
-
-        </ul>
+            </table>
 
 
     </div>

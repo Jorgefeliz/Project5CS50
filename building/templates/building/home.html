@@ -36,16 +36,22 @@
             </table>
 
         <h4> Reported issues</h4>
-        <ul>
-            <li>None</li>
+            <table class="table">
+                <tr>
+                    <th>Title</th>
+                    <th>Categoria</th>
+                    <th>Status</th>
+                </tr>
+                {% for issue in issues %}
+                    <tr >
+                        <td>{{ issue.title }}</td>
+                        <td>{{ issue.categoria}}</td>
+                        <td >{{ issue.status}}</td>
+                    </tr>
 
-        </ul>
+            {% endfor%}
 
-        <h4> Pending payments</h4>
-        <ul>
-            <li>None</li>
-
-        </ul>
+            </table>
 
 
     </div>

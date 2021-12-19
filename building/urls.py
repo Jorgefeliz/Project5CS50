@@ -11,5 +11,7 @@ urlpatterns = [
     path("announcement", views.announcement, name="announce"),
     path("announcement_update", views.announcement_update, name="announce_update"),
     path("announcement_retrieve", views.announcement_retrieve, name="announce_retrieve"),
+    path("issue/<int:issue_id>", views.issue, name="issue"),
+
 
 ]
