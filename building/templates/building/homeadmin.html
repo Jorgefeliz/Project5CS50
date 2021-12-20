@@ -79,6 +79,12 @@
                             </select>
 
                             <input type="button" class="btn btn-primary"  value="Update" onclick="issue_update( {{ issue.id}} )" />
+                            <input type="button" class="btn btn-secondary"  value="View" onclick="issue_view( {{ issue.id}} )" />
+
+                            <div id="detail{{issue.id}}">
+
+                              </div>
+                              
 
                         </td>
                     </tr>

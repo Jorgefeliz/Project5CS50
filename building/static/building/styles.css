@@ -98,3 +98,7 @@ h4{
   background-color: rgb(249, 66, 66);
   color: black;
 }
+
+ul{
+  list-style-type: none; 
+}

@@ -391,3 +391,41 @@ function issue_update(issue_id){
     return false;
 }
 
+function issue_view(issue_id){
+
+    let route = '/issue/' + issue_id
+    fetch(route)
+    .then(response => response.json())
+    .then(result => {
+        // Print result
+   
+        console.log(result);
+        
+        route = "detail" + issue_id
+        document.getElementById(route).style.display = "block";
+        document.getElementById(route).innerHTML =`
+        <ul>
+            <li> Ticket number: ${result["id"]} </li>
+            <li> Title: ${result["title"]} </li>
+            <li> Category: ${result["categoria"]} </li>
+            <li> Description: </li>
+            <li> ${result["description"]} </li>
+
+            <li> Reported: ${result["reported_date"]} </li>
+            <li> Status: ${result["status"]} </li>
+            <input type="button" class="btn btn-secondary"  value="Close" onclick="close_form(  ${issue_id} )" />
+        </ul>
+        `;
+
+     
+    });
+  
+    localStorage.clear();
+    return false;
+}
+  
+  function close_form(issue_id) {
+    let issue = "detail" + issue_id
+    document.getElementById(issue).style.display = "none";
+  }
+
