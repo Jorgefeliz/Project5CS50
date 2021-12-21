@@ -413,7 +413,7 @@ function issue_view(issue_id){
 
             <li> Reported: ${result["reported_date"]} </li>
             <li> Status: ${result["status"]} </li>
-            <input type="button" class="btn btn-secondary"  value="Close" onclick="close_form(  ${issue_id} )" />
+            <input type="button" class="btn btn-info"  value="Close" onclick="close_form(  ${issue_id} )" />
         </ul>
         `;
 

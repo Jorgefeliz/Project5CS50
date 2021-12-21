@@ -47,12 +47,14 @@
                         <td>{{ issue.title }}</td>
                         <td>{{ issue.categoria}}</td>
                         <td >
-                            <input type="button" class="btn btn-secondary"  value="View" onclick="issue_view( {{ issue.id}} )" />
+                            
                             {{ issue.status}}
+                            <input type="button" class="btn btn-secondary"  value="View" onclick="issue_view( {{ issue.id}} )" />
                             <div id="detail{{issue.id}}">
 
                             </div>
                         </td>
+
                     </tr>
 
             {% endfor%}
